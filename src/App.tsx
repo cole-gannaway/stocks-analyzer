@@ -1,56 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { DataTable } from './components/DataTable';
+import { DollarCostAverages } from './components/DollarCostAverages';
+import { ITransaction } from './model/ITransaction';
+import { addTransaction, bulkAddTransactions, removeTransaction, selectTransactions, updateDollarCostAverageProfitSummary, updateDollarCostAverageSummary, updateDollarCostAverageTransactions, updateTransaction } from './slices/transactionsSlice';
+import { convertTransactionsToDollarCostAverageData, summarizeDollarCostAverageTransactions, summarizeProfitsFromDollarCostAverageTransactions } from './utilities/transaction-utils';
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  const transactions = useAppSelector(selectTransactions);
+
+  function handleCreateTransaction(transaction?: ITransaction) {
+    dispatch(addTransaction(transaction ? transaction : null));
+  }
+
+  function handleUpdateTransaction(id: string, transaction: Partial<ITransaction>) {
+    dispatch(updateTransaction({ id: id, transaction: transaction }));
+  }
+
+  function handleDeleteTransaction(id: string) {
+    dispatch(removeTransaction({ id: id }));
+  }
+
+  function handleImportTransactionsComplete(transactions: ITransaction[]) {
+    dispatch(bulkAddTransactions(transactions));
+  }
+
+  // leverage React to listen to changes in state and convert to chart data accordingly
+  useEffect(() => {
+    const dcaTransactions = convertTransactionsToDollarCostAverageData(transactions);
+    const dcaSummary = summarizeDollarCostAverageTransactions(dcaTransactions);
+    const dcaProfitSummary = summarizeProfitsFromDollarCostAverageTransactions(dcaTransactions, transactions);
+    summarizeProfitsFromDollarCostAverageTransactions(dcaTransactions, transactions);
+    dispatch(updateDollarCostAverageTransactions(dcaTransactions));
+    dispatch(updateDollarCostAverageSummary(dcaSummary));
+    dispatch(updateDollarCostAverageProfitSummary(dcaProfitSummary));
+  }, [dispatch, transactions])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div>
+      <DollarCostAverages></DollarCostAverages>
+      <DataTable title="Cryptos" data={transactions} addRow={handleCreateTransaction} updateRow={handleUpdateTransaction} deleteRow={handleDeleteTransaction} onImportComplete={handleImportTransactionsComplete} ></DataTable>
     </div>
   );
 }
