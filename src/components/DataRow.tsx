@@ -15,27 +15,41 @@ export interface ITransactionProps {
     deleteRow: (id: string) => void;
 }
 export function DataRow(props: ITransactionProps) {
-
+    const buySell = props.data.amount === 0 ? "neither" : props.data.amount > 0 ? "buy" : "sell";
+    const textColor = buySell === "buy" ? "red" : "green";
     return <TableRow>
         <TableCell className="label-form">
-            <TextField value={props.data.symbol} onChange={(e) => props.updateRow(props.uuid, { symbol: e.target.value })}></TextField>
+            <TextField value={props.data.symbol} onChange={(e) => props.updateRow(props.uuid, { symbol: e.target.value })} variant="outlined"></TextField>
         </TableCell>
         <TableCell className="label-date">
             <DatePickerWrapper value={props.data.date} onChange={(date: number) => props.updateRow(props.uuid, { date: date })}></DatePickerWrapper>
         </TableCell>
         <TableCell>
-            <TextField type="number" value={props.data.amount} onChange={(e) => {
-                const amount = parseFloat(e.target.value);
-                if (amount) props.updateRow(props.uuid, { amount: amount });
-            }}></TextField>
+            <TextField type="number" value={props.data.amount}
+                onChange={(e) => {
+                    const amount = parseFloat(e.target.value);
+                    if (amount) props.updateRow(props.uuid, { amount: amount });
+                }}
+                inputProps={{ style: { color: textColor } }}
+                variant="outlined"
+            ></TextField>
         </TableCell>
         <TableCell>
-            {"$ "}
-            <TextField type="number" value={props.data.price} onChange={(e) => {
-                const price = parseFloat(e.target.value);
-                if (price) props.updateRow(props.uuid, { price: price });
-            }}></TextField>
+            <TextField type="number" value={props.data.price}
+                onChange={(e) => {
+                    const price = parseFloat(e.target.value);
+                    if (price) props.updateRow(props.uuid, { price: price });
+                }}
+                inputProps={{ style: { color: textColor } }}
+                variant="outlined"
+            ></TextField>
+        </TableCell>
+        <TableCell>
+            <TextField type="number" value={(props.data.price * props.data.amount).toFixed(2)}
+                inputProps={{ style: { color: textColor } }}
+                variant="outlined"
+            ></TextField>
         </TableCell>
         <TableCell onClick={() => props.deleteRow(props.uuid)}><DeleteIcon /></TableCell>
-    </TableRow>
+    </TableRow >
 }

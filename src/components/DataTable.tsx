@@ -65,7 +65,9 @@ export function DataTable(props: ITableProps) {
 
     return <div>
         <TableContainer component={Paper} >
-            <div style={{ textAlign: 'center' }}><h3>{props.title} <AddCircleOutlineIcon onClick={handleAddRow} /></h3></div>
+            <div style={{ textAlign: 'center' }}>
+                <h3>{props.title} <AddCircleOutlineIcon onClick={handleAddRow} /></h3>
+            </div>
             <div style={{ maxHeight: 400, overflowX: 'auto' }}>
                 <Table stickyHeader>
                     <TableHead>
@@ -74,6 +76,7 @@ export function DataTable(props: ITableProps) {
                             <TableCell>Date</TableCell>
                             <TableCell>Amount</TableCell>
                             <TableCell>Price</TableCell>
+                            <TableCell>Total</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
@@ -81,13 +84,15 @@ export function DataTable(props: ITableProps) {
                         {Object.entries(props.data).map((entry) => {
                             const uuid = entry[0];
                             const row = entry[1];
-                            return <DataRow key={uuid} uuid={uuid} data={row} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow}></DataRow>
+                            return <DataRow key={uuid} uuid={uuid} data={row} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow} />
                         })}
                     </TableBody>
                 </Table>
             </div>
-            <input type="file" accept=".csv" onChange={handleImport} />
-            <Button onClick={handleExport}>Export</Button>
+            <div>
+                <input type="file" accept=".csv" onChange={handleImport} />
+                <Button onClick={handleExport}>Export</Button>
+            </div>
         </TableContainer>
     </div>
 }

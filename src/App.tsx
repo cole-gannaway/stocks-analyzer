@@ -41,6 +41,7 @@ function App() {
     <div>
       <DollarCostAverages></DollarCostAverages>
       <DataTable title="Cryptos" data={transactions} addRow={handleCreateTransaction} updateRow={handleUpdateTransaction} deleteRow={handleDeleteTransaction} onImportComplete={handleImportTransactionsComplete} ></DataTable>
+      <div style={{ height: 100 }}></div>
     </div>
   );
 }
