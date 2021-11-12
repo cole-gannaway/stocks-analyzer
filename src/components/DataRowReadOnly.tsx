@@ -14,7 +14,7 @@ export interface ITransactionProps {
 }
 export function DataRowReadOnly(props: ITransactionProps) {
     const buySell = props.data.amount === 0 ? "neither" : props.data.amount > 0 ? "buy" : "sell";
-    const textColor = buySell === "buy" ? "red" : "green";
+    const textColor = buySell === "buy" ? "red" : buySell === "sell" ? "green" : "black";
     const dateTime = new Date(props.data.date);
     const commaFormatter = new Intl.NumberFormat('en-US');
     return <TableRow>

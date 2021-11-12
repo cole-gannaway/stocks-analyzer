@@ -1,6 +1,7 @@
 import { Grid } from "@material-ui/core";
 import { useAppSelector } from "../app/hooks";
-import { selectCurrentPrices, selectDCAProfitSummary, selectDCASummaries } from "../slices/transactionsSlice";
+import { selectCurrentPrices } from "../slices/currentPricesSlice";
+import { selectDCAProfitSummary, selectDCASummaries } from "../slices/transactionsSlice";
 
 export function DollarCostAverages() {
     const dcaSummaries = useAppSelector(selectDCASummaries);
@@ -31,7 +32,7 @@ export function DollarCostAverages() {
                         {Object.entries(dcaSummaries).map((entry) => {
                             const symbol = entry[0];
                             const summary = entry[1];
-                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${summary.price.toFixed(4)}</td></tr>
+                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${summary.price.toFixed(2)}</td></tr>
                         })}
                     </tbody>
                 </table>
@@ -73,6 +74,7 @@ export function DollarCostAverages() {
                             const profits = entry[1];
                             return <tr key={"dca-profits-" + symbol}><td>{symbol}</td><td>${profits.toFixed(2)}</td></tr>
                         })}
+                        <tr key={"dca-profits-sum"}><td>Total</td><td>${Object.values(dcaProfitSummary.profits).reduce((prev, curr) => prev + curr, 0).toFixed(2)}</td></tr>
                     </tbody>
                 </table>
             </Grid>

@@ -1,18 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 import { uuid } from 'uuidv4';
-import { ITransaction } from '../model/ITransaction';
+import { isBuy, ITransaction, ITransactionAndId } from '../model/ITransaction';
 import {
   IDollarCostAverageProfitSummary,
   IDollarCostAverageSummary,
   IDollarCostAverageTransactions,
 } from '../model/IDollarCostAverage';
-import CURRENT_DATA from '../config/current_data.json';
-
-const currentPrices: { [symbol: string]: number } = {};
-CURRENT_DATA.data.forEach((data) => {
-  currentPrices[data.symbol] = data.quote.USD.price;
-});
 
 export interface TranscationsState {
   transactions: {
@@ -22,9 +16,6 @@ export interface TranscationsState {
     dollarCostAveragesTransactions: IDollarCostAverageTransactions;
     dollarCostAveragesSummary: IDollarCostAverageSummary;
     dollarCostAveragesProfitsSummary: IDollarCostAverageProfitSummary;
-  };
-  currentPrices: {
-    [symbol: string]: number;
   };
 }
 
@@ -38,7 +29,6 @@ const initialState: TranscationsState = {
       notSoldAmount: {},
     },
   },
-  currentPrices: currentPrices,
 };
 
 export const transactionsSlice = createSlice({
@@ -114,13 +104,111 @@ export const {
 
 export const selectTransactions = (state: RootState) =>
   state.transactionsData.transactions;
-export const selectCurrentPrices = (state: RootState) =>
-  state.transactionsData.currentPrices;
 export const selectDCASummaries = (state: RootState) =>
   state.transactionsData.summaryData.dollarCostAveragesSummary;
 export const selectDCATransactions = (state: RootState) =>
   state.transactionsData.summaryData.dollarCostAveragesTransactions;
 export const selectDCAProfitSummary = (state: RootState) =>
   state.transactionsData.summaryData.dollarCostAveragesProfitsSummary;
+
+export const selectDCATransactionsMemoized = createSelector(
+  [selectTransactions],
+  (transactionsData) => {
+    // deep copy transactions map to a list
+    const transactions: ITransactionAndId[] = Object.entries(
+      transactionsData
+    ).map((entry) => {
+      return {
+        id: entry[0],
+        amount: entry[1].amount,
+        date: entry[1].date,
+        price: entry[1].price,
+        symbol: entry[1].symbol,
+      };
+    });
+
+    // sort transactions by date
+    transactions.sort((a, b) => a.date - b.date);
+
+    /** Map containing buys */
+    const dcaTransactions: IDollarCostAverageTransactions = {};
+    /** Map containing symbols to "sell transactions" sorted by date */
+    const sellsMap: Map<string, ITransactionAndId[]> = new Map();
+    transactions.forEach((transaction) => {
+      if (isBuy(transaction)) {
+        dcaTransactions[transaction.id] = {
+          result: {
+            amount: transaction.amount,
+            date: transaction.date,
+            price: transaction.price,
+            symbol: transaction.symbol,
+          },
+          sells: {},
+        };
+      } else {
+        let sellsListForSymbol = sellsMap.get(transaction.symbol);
+        if (!sellsListForSymbol) sellsListForSymbol = [];
+        sellsListForSymbol.push(transaction);
+        sellsMap.set(transaction.symbol, sellsListForSymbol);
+      }
+    });
+
+    // apply all possible sells to each buy
+    const buys = Object.values(dcaTransactions);
+    buys.forEach((dcaTransaction) => {
+      const buy = dcaTransaction.result;
+      // look up based on the symbol
+      const symbol = buy.symbol;
+      const sells = sellsMap.get(symbol);
+      // apply as many sells as possible to each buy
+      while (sells && sells.length !== 0 && buy.amount !== 0) {
+        const sell = sells.pop();
+        if (sell) {
+          let amountApplied = 0;
+          // apply all of the sell to buy
+          if (-1 * sell.amount <= buy.amount) {
+            amountApplied = sell.amount;
+            buy.amount += sell.amount;
+            sell.amount = 0;
+          }
+          // apply partial sell to buy
+          else {
+            amountApplied = -1 * buy.amount;
+            sell.amount += buy.amount;
+            buy.amount = 0;
+            // push the sell back on to use for other buys
+            sells.push(sell);
+          }
+          dcaTransaction.sells[sell.id] = {
+            amount: amountApplied,
+            date: sell.date,
+            price: sell.price,
+            symbol: sell.symbol,
+          };
+        }
+      }
+    });
+    return dcaTransactions;
+  }
+);
+
+export const selectDCATransactionsAmountRemaining = createSelector(
+  [selectDCATransactionsMemoized],
+  (dcaTransactions) => {
+    // flatten out the transactions to be easily accessible
+    const transactionsAmountLeft: { [id: string]: number } = {};
+    const entries = Object.entries(dcaTransactions);
+    entries.forEach((entry) => {
+      const buyUUID = entry[0];
+      transactionsAmountLeft[buyUUID] = entry[1].result.amount;
+      const sellEntries = Object.entries(entry[1].sells);
+      sellEntries.forEach((sellEntry) => {
+        const sellUUID = sellEntry[0];
+        transactionsAmountLeft[sellUUID] = sellEntry[1].amount;
+      });
+    });
+    return transactionsAmountLeft;
+  }
+);
 
 export default transactionsSlice.reducer;

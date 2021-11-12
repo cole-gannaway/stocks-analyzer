@@ -16,11 +16,13 @@ import Button from '@material-ui/core/Button';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import { parse } from 'papaparse';
+import { TableFooter } from '@material-ui/core';
 
 
 export interface ITableProps {
     title: string;
     data: { [id: string]: ITransaction; }
+    dcaData: { [id: string]: number };
     addRow: (data?: ITransaction) => void;
     updateRow: (id: string, row: Partial<ITransaction>) => void;
     deleteRow: (id: string) => void;
@@ -84,16 +86,18 @@ export function DataTable(props: ITableProps) {
                         {Object.entries(props.data).map((entry) => {
                             const uuid = entry[0];
                             const row = entry[1];
-                            return <DataRow key={uuid} uuid={uuid} data={row} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow} />
+                            const amountRemaining = props.dcaData[uuid];
+                            const isUsed = amountRemaining === 0 ? true : false;
+                            return <DataRow key={uuid} uuid={uuid} data={row} isUsed={isUsed} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow} />
                         })}
                     </TableBody>
                 </Table>
             </div>
-            <div>
-                <input type="file" accept=".csv" onChange={handleImport} />
-                <Button onClick={handleExport}>Export</Button>
-            </div>
         </TableContainer>
+        <div>
+            <input type="file" accept=".csv" onChange={handleImport} />
+            <Button onClick={handleExport}>Export</Button>
+        </div>
     </div>
 }
 
