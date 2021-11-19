@@ -8,3 +8,9 @@ export function roundDecimalPlaces(val: number, decimalPlaces: number) {
     Math.pow(10, decimalPlaces)
   );
 }
+
+export function toFixedUnlessZero(val: number, fractionDigits: number) {
+  const toFixed = val.toFixed(fractionDigits);
+  if (toFixed !== '0.00') return toFixed;
+  else return val.toString();
+}

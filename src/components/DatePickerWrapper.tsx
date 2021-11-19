@@ -30,6 +30,7 @@ export function DatePickerWrapper(props: DatePickerWrapperProps) {
             format="MM/dd/yyyy"
             value={convertDateMsToString(props.value)}
             onChange={handleChange}
+            variant="dialog"
             KeyboardButtonProps={{
                 'aria-label': 'change date',
             }}

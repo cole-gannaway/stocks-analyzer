@@ -56,6 +56,9 @@ export const transactionsSlice = createSlice({
         state.transactions[id] = transaction;
       });
     },
+    deleteAllTransactions: (state) => {
+      state.transactions = {};
+    },
     updateTransaction: (
       state,
       action: PayloadAction<{ id: string; transaction: Partial<ITransaction> }>
@@ -95,6 +98,7 @@ export const transactionsSlice = createSlice({
 export const {
   addTransaction,
   bulkAddTransactions,
+  deleteAllTransactions,
   updateTransaction,
   removeTransaction,
   updateDollarCostAverageTransactions,

@@ -2,6 +2,7 @@ import { Grid } from "@material-ui/core";
 import { useAppSelector } from "../app/hooks";
 import { selectCurrentPrices } from "../slices/currentPricesSlice";
 import { selectDCAProfitSummary, selectDCASummaries } from "../slices/transactionsSlice";
+import { toFixedUnlessZero } from "../utilities/number-utils";
 
 export function DollarCostAverages() {
     const dcaSummaries = useAppSelector(selectDCASummaries);
@@ -32,7 +33,7 @@ export function DollarCostAverages() {
                         {Object.entries(dcaSummaries).map((entry) => {
                             const symbol = entry[0];
                             const summary = entry[1];
-                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${summary.price.toFixed(2)}</td></tr>
+                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${toFixedUnlessZero(summary.price, 2)}</td></tr>
                         })}
                     </tbody>
                 </table>
@@ -43,7 +44,7 @@ export function DollarCostAverages() {
                 <table key={"current-prices"}>
                     <tbody>
                         {symbolsAndPrices.map(data => {
-                            return <tr key={"current-prices-" + data.symbol}><td>{data.symbol}</td><td>${data.price.toFixed(2)}</td></tr>
+                            return <tr key={"current-prices-" + data.symbol}><td>{data.symbol}</td><td>${toFixedUnlessZero(data.price, 2)}</td></tr>
                         })}
                     </tbody>
                 </table>

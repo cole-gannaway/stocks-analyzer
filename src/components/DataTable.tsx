@@ -1,5 +1,4 @@
 import React from 'react';
-import './DataTable.css'
 
 import { ITransaction } from '../model/ITransaction';
 import { convertCSVRowIntoTransactionRow, convertTransactionRowIntoCSVRows, createCSV } from '../utilities/csv-utils'
@@ -74,6 +73,7 @@ export function DataTable(props: ITableProps) {
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
+                            <TableCell></TableCell>
                             <TableCell>Symbol </TableCell>
                             <TableCell>Date</TableCell>
                             <TableCell>Amount</TableCell>
@@ -88,7 +88,7 @@ export function DataTable(props: ITableProps) {
                             const row = entry[1];
                             const amountRemaining = props.dcaData[uuid];
                             const isUsed = amountRemaining === 0 ? true : false;
-                            return <DataRow key={uuid} uuid={uuid} data={row} isUsed={isUsed} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow} />
+                            return <DataRow key={uuid} uuid={uuid} data={row} isUsed={isUsed} updateRow={props.updateRow} deleteRow={props.deleteRow} />
                         })}
                     </TableBody>
                 </Table>

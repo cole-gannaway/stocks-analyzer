@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { DataTable } from './components/DataTable';
 import { DollarCostAverages } from './components/DollarCostAverages';
 import { ITransaction } from './model/ITransaction';
-import { addTransaction, bulkAddTransactions, removeTransaction, selectDCATransactionsAmountRemaining, selectDCATransactionsMemoized, selectTransactions, updateDollarCostAverageProfitSummary, updateDollarCostAverageSummary, updateDollarCostAverageTransactions, updateTransaction } from './slices/transactionsSlice';
+import { addTransaction, bulkAddTransactions, deleteAllTransactions, removeTransaction, selectDCATransactionsAmountRemaining, selectDCATransactionsMemoized, selectTransactions, updateDollarCostAverageProfitSummary, updateDollarCostAverageSummary, updateDollarCostAverageTransactions, updateTransaction } from './slices/transactionsSlice';
 import { summarizeDollarCostAverageTransactions, summarizeProfitsFromDollarCostAverageTransactions } from './utilities/transaction-utils';
 import { fetchCurrentCryptoPrices } from './slices/currentPricesSlice';
 
@@ -28,6 +28,7 @@ function App() {
   }
 
   function handleImportTransactionsComplete(transactions: ITransaction[]) {
+    dispatch(deleteAllTransactions());
     dispatch(bulkAddTransactions(transactions));
   }
 
@@ -55,3 +56,4 @@ function App() {
 }
 
 export default App;
+
