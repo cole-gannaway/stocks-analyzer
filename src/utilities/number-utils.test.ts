@@ -1,4 +1,3 @@
-import { intlFormat } from "date-fns";
 import { formatWithCommas, roundDecimalPlaces } from "./number-utils";
 
 describe('number utils', () => {
