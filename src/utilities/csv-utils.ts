@@ -19,11 +19,11 @@ export function convertTransactionRowIntoCSVRows(dataRows: ITransaction[]) {
 
 export function convertCSVRowIntoTransactionRow(csvRow: string[]) {
   const symbol = csvRow[0];
-  const date: number = parseInt(csvRow[1]);
-  const amount: number = parseFloat(csvRow[2]);
-  const price:number = parseFloat(csvRow[3]);
+  const date = parseInt(csvRow[1]);
+  const amount = parseFloat(csvRow[2]);
+  const price = parseFloat(csvRow[3]);
   const result: ITransaction = {
-    symbol: symbol,
+    symbol,
     date: !isNaN(date) ? date : -1,
     amount: !isNaN(amount) ? amount : -1,
     price: !isNaN(price) ? price : -1,
