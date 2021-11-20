@@ -50,12 +50,15 @@ export function DataRow(props: ITransactionProps) {
         <TableCell>
             {!isEditing ?
                 props.data.amount :
-                <TextField type="number" value={props.data.amount}
+                <TextField value={props.data.amount}
                     onChange={(e) => {
                         const amount = parseFloat(e.target.value);
                         if (amount) props.updateRow(props.uuid, { amount: amount });
                     }}
-                    inputProps={{ style: { color: textColor } }}
+                    inputProps={{
+                        inputMode: 'numeric', pattern: '[0-9]*',
+                        style: { color: textColor }
+                    }}
                     variant="outlined"
                 ></TextField>
             }
@@ -63,12 +66,16 @@ export function DataRow(props: ITransactionProps) {
         <TableCell>
             {!isEditing ?
                 ("$" + commaFormatter.format(props.data.price)) :
-                <TextField type="number" value={props.data.price}
+                <TextField
                     onChange={(e) => {
                         const price = parseFloat(e.target.value);
                         if (price) props.updateRow(props.uuid, { price: price });
                     }}
-                    inputProps={{ style: { color: textColor } }}
+                    value={props.data.price}
+                    inputProps={{
+                        inputMode: 'numeric', pattern: '[0-9]*',
+                        style: { color: textColor }
+                    }}
                     variant="outlined"
                 ></TextField>
             }
@@ -76,8 +83,12 @@ export function DataRow(props: ITransactionProps) {
         <TableCell>
             {!isEditing ?
                 ("$" + commaFormatter.format(roundDecimalPlaces(props.data.price * props.data.amount, 2))) :
-                <TextField type="number" value={(props.data.price * props.data.amount).toFixed(2)}
-                    inputProps={{ style: { color: textColor } }}
+                <TextField
+                    value={(props.data.price * props.data.amount).toFixed(2)}
+                    inputProps={{
+                        inputMode: 'numeric', pattern: '[0-9]*',
+                        style: { color: textColor }
+                    }}
                     variant="outlined"
                 ></TextField>
             }
