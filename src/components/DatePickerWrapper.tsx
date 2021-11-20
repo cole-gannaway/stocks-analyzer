@@ -14,7 +14,7 @@ export function DatePickerWrapper(props: DatePickerWrapperProps) {
         const date = new Date(ms);
         const MM = getMonthInMMFormat(date.getMonth());
         const dd = getDateinDDFormat(date.getDate())
-        const retVal = MM + "/" + dd + "/" + date.getFullYear().toString();
+        const retVal = `${MM}/${dd}/${date.getFullYear}`;
         return retVal;
     }
 
