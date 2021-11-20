@@ -1,23 +1,23 @@
 import React from 'react';
-import './DataTable.css'
 
-import { ITransaction } from '../model/ITransaction';
-import { convertCSVRowIntoTransactionRow, convertTransactionRowIntoCSVRows, createCSV } from '../utilities/csv-utils'
-import { DataRow } from './DataRow';
-
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import { parse } from 'papaparse';
-import { TableFooter } from '@material-ui/core';
 
+import './DataTable.css'
+import { DataRow } from './DataRow';
+import { ITransaction } from '../model/ITransaction';
+import {
+    convertCSVRowIntoTransactionRow, convertTransactionRowIntoCSVRows, createCSV
+} from '../utilities/csv-utils'
 
 export interface ITableProps {
     title: string;

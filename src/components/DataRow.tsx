@@ -1,6 +1,4 @@
-
-import { DatePickerWrapper } from './DatePickerWrapper';
-import { ITransaction } from '../model/ITransaction';
+import { useState } from 'react';
 
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -8,8 +6,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import { TextField } from '@material-ui/core';
+
+import { DatePickerWrapper } from './DatePickerWrapper';
+import { ITransaction } from '../model/ITransaction';
 import { roundDecimalPlaces } from '../utilities/number-utils';
-import { useState } from 'react';
 
 export interface ITransactionProps {
     uuid: string;
@@ -19,6 +19,7 @@ export interface ITransactionProps {
     updateRow: (id: string, row: Partial<ITransaction>) => void;
     deleteRow: (id: string) => void;
 }
+
 export function DataRow(props: ITransactionProps) {
     const [isEditing, setIsEditing] = useState(false);
     const dateTime = new Date(props.data.date);

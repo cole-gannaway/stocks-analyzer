@@ -1,9 +1,9 @@
-import { ITransaction } from '../model/ITransaction';
-
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { formatWithCommas, roundDecimalPlaces } from '../utilities/number-utils';
+
+import { ITransaction } from '../model/ITransaction';
+import { roundDecimalPlaces } from '../utilities/number-utils';
 
 export interface ITransactionProps {
     uuid: string;
