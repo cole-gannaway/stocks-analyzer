@@ -7,13 +7,10 @@ export function createCSV(rows: string[][]) {
 }
 
 export function convertTransactionRowIntoCSVRows(dataRows: ITransaction[]) {
-  const csvRows = dataRows.map((dataRow) => {
-    const row: string[] = [];
-    row.push(dataRow.symbol);
-    row.push(dataRow.date.toString());
-    row.push(dataRow.amount.toString());
-    row.push(dataRow.price.toString());
-    return row;
+  const csvRows = dataRows.map(({symbol, date, amount, price}) => {
+    return [
+      symbol, date.toString(), amount.toString(), price.toString()
+    ];
   });
   const headerRow = ['symbol', 'date', 'amount', 'price'];
   csvRows.unshift(headerRow);
@@ -22,11 +19,11 @@ export function convertTransactionRowIntoCSVRows(dataRows: ITransaction[]) {
 
 export function convertCSVRowIntoTransactionRow(csvRow: string[]) {
   const symbol = csvRow[0];
-  const date: number = parseInt(csvRow[1]);
-  const amount: number = parseFloat(csvRow[2]);
-  const price:number = parseFloat(csvRow[3]);
+  const date = parseInt(csvRow[1]);
+  const amount = parseFloat(csvRow[2]);
+  const price = parseFloat(csvRow[3]);
   const result: ITransaction = {
-    symbol: symbol,
+    symbol,
     date: !isNaN(date) ? date : -1,
     amount: !isNaN(amount) ? amount : -1,
     price: !isNaN(price) ? price : -1,

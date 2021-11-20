@@ -1,8 +1,8 @@
-import { getDateinDDFormat, getMonthInMMFormat } from '../utilities/date-utils'
-
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+
+import { getDateinDDFormat, getMonthInMMFormat } from '../utilities/date-utils'
 
 export interface DatePickerWrapperProps {
     value: number;
@@ -14,7 +14,7 @@ export function DatePickerWrapper(props: DatePickerWrapperProps) {
         const date = new Date(ms);
         const MM = getMonthInMMFormat(date.getMonth());
         const dd = getDateinDDFormat(date.getDate())
-        const retVal = MM + "/" + dd + "/" + date.getFullYear().toString();
+        const retVal = `${MM}/${dd}/${date.getFullYear}`;
         return retVal;
     }
 

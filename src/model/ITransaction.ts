@@ -6,8 +6,7 @@ export interface ITransaction {
 }
 
 export function isBuy(transaction: ITransaction) {
-  if (transaction.amount > 0) return true;
-  else return false;
+  return transaction.amount > 0;
 }
 
 /** Extends the ITransaction interface to add an id field */
