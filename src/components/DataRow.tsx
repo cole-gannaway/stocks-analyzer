@@ -34,66 +34,79 @@ export function DataRow(props: ITransactionProps) {
     }
     return <TableRow>
         <TableCell >
-            {!isEditing ? <EditIcon onClick={(e) => { toggleIsEditing() }} /> : <SaveIcon onClick={(e) => { toggleIsEditing() }} />}
+            {
+                !isEditing
+                    ? <EditIcon onClick={(e) => { toggleIsEditing() }} />
+                    : <SaveIcon onClick={(e) => { toggleIsEditing() }} />
+            }
         </TableCell>
         <TableCell className="label-form" style={{ textDecoration: textDecoration }}>
-            {!isEditing ?
-                props.data.symbol :
-                <TextField value={props.data.symbol} onChange={(e) => props.updateRow(props.uuid, { symbol: e.target.value })} variant="outlined"></TextField>
+            {
+                !isEditing
+                    ? props.data.symbol
+                    : <TextField
+                        value={props.data.symbol}
+                        onChange={(e) => props.updateRow(props.uuid, { symbol: e.target.value })}
+                        variant="outlined"></TextField>
             }
         </TableCell>
         <TableCell className="label-date">
-            {!isEditing ?
-                dateTime.toLocaleDateString() + " " + dateTime.toLocaleTimeString() :
-                <DatePickerWrapper value={props.data.date} onChange={(date: number) => props.updateRow(props.uuid, { date: date })}></DatePickerWrapper>
+            {
+                !isEditing
+                    ? dateTime.toLocaleDateString() + " " + dateTime.toLocaleTimeString()
+                    : <DatePickerWrapper
+                        value={props.data.date}
+                        onChange={(date: number) => props.updateRow(props.uuid, { date: date })}></DatePickerWrapper>
             }
         </TableCell>
         <TableCell>
-            {!isEditing ?
-                props.data.amount :
-                <TextField value={props.data.amount}
-                    onChange={(e) => {
-                        const amount = parseFloat(e.target.value);
-                        if (amount) props.updateRow(props.uuid, { amount: amount });
-                    }}
-                    inputProps={{
-                        inputMode: 'numeric', pattern: '[0-9]*',
-                        style: { color: textColor }
-                    }}
-                    variant="outlined"
-                ></TextField>
+            {
+                !isEditing
+                    ? props.data.amount
+                    : <TextField value={props.data.amount}
+                        onChange={(e) => {
+                            const amount = parseFloat(e.target.value);
+                            if (amount) props.updateRow(props.uuid, { amount: amount });
+                        }}
+                        inputProps={{
+                            inputMode: 'numeric', pattern: '[0-9]*',
+                            style: { color: textColor }
+                        }}
+                        variant="outlined"></TextField>
             }
         </TableCell>
         <TableCell>
-            {!isEditing ?
-                ("$" + commaFormatter.format(props.data.price)) :
-                <TextField
-                    onChange={(e) => {
-                        const price = parseFloat(e.target.value);
-                        if (price) props.updateRow(props.uuid, { price: price });
-                    }}
-                    value={props.data.price}
-                    inputProps={{
-                        inputMode: 'numeric', pattern: '[0-9]*',
-                        style: { color: textColor }
-                    }}
-                    variant="outlined"
-                ></TextField>
+            {
+                !isEditing
+                    ? ("$" + commaFormatter.format(props.data.price))
+                    : <TextField
+                        onChange={(e) => {
+                            const price = parseFloat(e.target.value);
+                            if (price) props.updateRow(props.uuid, { price: price });
+                        }}
+                        value={props.data.price}
+                        inputProps={{
+                            inputMode: 'numeric', pattern: '[0-9]*',
+                            style: { color: textColor }
+                        }}
+                        variant="outlined"></TextField>
             }
         </TableCell>
         <TableCell>
-            {!isEditing ?
-                ("$" + commaFormatter.format(roundDecimalPlaces(props.data.price * props.data.amount, 2))) :
-                <TextField
-                    value={(props.data.price * props.data.amount).toFixed(2)}
-                    inputProps={{
-                        inputMode: 'numeric', pattern: '[0-9]*',
-                        style: { color: textColor }
-                    }}
-                    variant="outlined"
-                ></TextField>
+            {
+                !isEditing
+                    ? ("$" + commaFormatter.format(roundDecimalPlaces(props.data.price * props.data.amount, 2)))
+                    : <TextField
+                        value={(props.data.price * props.data.amount).toFixed(2)}
+                        inputProps={{
+                            inputMode: 'numeric', pattern: '[0-9]*',
+                            style: { color: textColor }
+                        }}
+                        variant="outlined"></TextField>
             }
         </TableCell>
-        <TableCell onClick={() => props.deleteRow(props.uuid)}><DeleteIcon /></TableCell>
+        <TableCell onClick={() => props.deleteRow(props.uuid)}>
+            <DeleteIcon />
+        </TableCell>
     </TableRow >
 }

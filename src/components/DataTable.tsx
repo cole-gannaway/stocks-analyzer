@@ -28,11 +28,12 @@ export interface ITableProps {
     deleteRow: (id: string) => void;
     onImportComplete: (data: ITransaction[]) => void;
 }
-export function DataTable(props: ITableProps) {
 
+export function DataTable(props: ITableProps) {
     function handleAddRow() {
         props.addRow();
     }
+
     function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files) {
             const file = e.target.files[0];
@@ -54,6 +55,7 @@ export function DataTable(props: ITableProps) {
             reader.readAsBinaryString(file);
         }
     }
+
     function handleExport() {
         const filename = props.title;
         const csvRows = convertTransactionRowIntoCSVRows(Object.values(props.data));
@@ -88,7 +90,14 @@ export function DataTable(props: ITableProps) {
                             const row = entry[1];
                             const amountRemaining = props.dcaData[uuid];
                             const isUsed = amountRemaining === 0 ? true : false;
-                            return <DataRow key={uuid} uuid={uuid} data={row} isUsed={isUsed} addRow={props.addRow} updateRow={props.updateRow} deleteRow={props.deleteRow} />
+                            return <DataRow
+                                key={uuid}
+                                uuid={uuid}
+                                data={row}
+                                isUsed={isUsed}
+                                addRow={props.addRow}
+                                updateRow={props.updateRow}
+                                deleteRow={props.deleteRow} />
                         })}
                     </TableBody>
                 </Table>
@@ -100,4 +109,3 @@ export function DataTable(props: ITableProps) {
         </div>
     </div>
 }
-
