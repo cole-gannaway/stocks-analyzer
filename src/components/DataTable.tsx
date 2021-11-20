@@ -1,9 +1,5 @@
 import React from 'react';
 
-import { ITransaction } from '../model/ITransaction';
-import { convertCSVRowIntoTransactionRow, convertTransactionRowIntoCSVRows, createCSV } from '../utilities/csv-utils'
-import { DataRow } from './DataRow';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,11 +8,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import { parse } from 'papaparse';
-import { TableFooter } from '@material-ui/core';
 
+import { ITransaction } from '../model/ITransaction';
+import { convertCSVRowIntoTransactionRow, convertTransactionRowIntoCSVRows, createCSV } from '../utilities/csv-utils'
+import { DataRow } from './DataRow';
+import { DataTableHead } from './DataTableHead';
 
 export interface ITableProps {
     title: string;
@@ -29,9 +27,6 @@ export interface ITableProps {
 }
 export function DataTable(props: ITableProps) {
 
-    function handleAddRow() {
-        props.addRow();
-    }
     function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files) {
             const file = e.target.files[0];
@@ -66,9 +61,7 @@ export function DataTable(props: ITableProps) {
 
     return <div>
         <TableContainer component={Paper} >
-            <div style={{ textAlign: 'center' }}>
-                <h3>{props.title} <AddCircleOutlineIcon onClick={handleAddRow} /></h3>
-            </div>
+            <DataTableHead title={props.title} addRow={props.addRow} />
             <div style={{ maxHeight: 400, overflowX: 'auto' }}>
                 <Table stickyHeader>
                     <TableHead>

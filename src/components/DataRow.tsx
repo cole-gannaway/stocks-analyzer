@@ -1,6 +1,4 @@
-
-import { DatePickerWrapper } from './DatePickerWrapper';
-import { ITransaction } from '../model/ITransaction';
+import { useState } from 'react';
 
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -8,9 +6,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import { TextField } from '@material-ui/core';
+
+import { DatePickerWrapper } from './DatePickerWrapper';
+import { ITransaction } from '../model/ITransaction';
 import { roundDecimalPlaces } from '../utilities/number-utils';
-import { useState } from 'react';
-import { symbolName } from 'typescript';
 
 export interface IDataRowProps {
     uuid: string;
@@ -22,7 +21,7 @@ export interface IDataRowProps {
 export function DataRow(props: IDataRowProps) {
     const [isEditing, setIsEditing] = useState(false);
 
-    // temp variables
+    // variables for editing
     const [symbol, setSymbol] = useState(props.data.symbol);
     const [date, setDate] = useState(props.data.date);
     const [amount, setAmount] = useState(props.data.amount);
@@ -48,6 +47,7 @@ export function DataRow(props: IDataRowProps) {
         })
         toggleIsEditing();
     }
+
     return <TableRow>
         <TableCell >
             {!isEditing ?
