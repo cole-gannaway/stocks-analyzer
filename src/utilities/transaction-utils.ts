@@ -6,8 +6,7 @@ import {
 import { ITransaction } from '../model/ITransaction';
 
 export function addToSumMap(map: Map<string, number>, symbol: string, amount: number) {
-  let sum = map.get(symbol);
-  if (!sum) sum = 0;
+  let sum = map.get(symbol) ?? 0;
   sum += amount;
   map.set(symbol, sum);
 }
