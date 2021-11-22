@@ -1,4 +1,3 @@
-import { execPath } from "process";
 import { formatWithCommas, roundDecimalPlaces, toFixedUnlessZero } from "./number-utils";
 
 describe('number utils', () => {

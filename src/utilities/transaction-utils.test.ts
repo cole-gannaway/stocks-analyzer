@@ -1,4 +1,3 @@
-import { map } from "@firebase/util";
 import { addToSumMap } from "./transaction-utils";
 
 describe('add to sum map', () => {
