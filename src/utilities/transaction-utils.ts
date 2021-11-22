@@ -5,7 +5,7 @@ import {
 } from '../model/IDollarCostAverage';
 import { ITransaction } from '../model/ITransaction';
 
-function addToSumMap(map: Map<string, number>, symbol: string, amount: number) {
+export function addToSumMap(map: Map<string, number>, symbol: string, amount: number) {
   let sum = map.get(symbol);
   if (!sum) sum = 0;
   sum += amount;
