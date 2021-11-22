@@ -23,17 +23,19 @@ describe('date utils', () => {
 
     describe('get month in MM format', () => {
         it('should convert a month to MM format when month is < 10', () => {
+            const testDate = new Date('9/1/2021');
             // arrange
             const expected = '09';
             // act
-            const actual = getMonthInMMFormat(9);
+            const actual = getMonthInMMFormat(testDate.getMonth());
             // assert
             expect(actual).toEqual(expected);
         });
 
         it('should convert a month to MM format when month is >= 10', () => {
+            const testDate = new Date('10/1/2021');
             const expected = '10';
-            const actual = getMonthInMMFormat(10);
+            const actual = getMonthInMMFormat(testDate.getMonth());
             expect(actual).toBe(expected);
         });
     });
