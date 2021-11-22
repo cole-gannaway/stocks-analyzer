@@ -1,5 +1,5 @@
 export function formatWithCommas(formatter: Intl.NumberFormat, val: number) {
-  formatter.format(val);
+  return formatter.format(val);
 }
 
 export function roundDecimalPlaces(val: number, decimalPlaces: number) {
