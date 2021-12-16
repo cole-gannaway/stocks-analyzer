@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/stocks-analyzer/static/css/main.f8bdb9a1.chunk.css",
-    "main.js": "/stocks-analyzer/static/js/main.46b712d8.chunk.js",
-    "main.js.map": "/stocks-analyzer/static/js/main.46b712d8.chunk.js.map",
+    "main.js": "/stocks-analyzer/static/js/main.bf8305a5.chunk.js",
+    "main.js.map": "/stocks-analyzer/static/js/main.bf8305a5.chunk.js.map",
     "runtime-main.js": "/stocks-analyzer/static/js/runtime-main.12760762.js",
     "runtime-main.js.map": "/stocks-analyzer/static/js/runtime-main.12760762.js.map",
-    "static/js/2.0dbaebcc.chunk.js": "/stocks-analyzer/static/js/2.0dbaebcc.chunk.js",
-    "static/js/2.0dbaebcc.chunk.js.map": "/stocks-analyzer/static/js/2.0dbaebcc.chunk.js.map",
+    "static/js/2.d95cb60f.chunk.js": "/stocks-analyzer/static/js/2.d95cb60f.chunk.js",
+    "static/js/2.d95cb60f.chunk.js.map": "/stocks-analyzer/static/js/2.d95cb60f.chunk.js.map",
     "index.html": "/stocks-analyzer/index.html",
     "static/css/main.f8bdb9a1.chunk.css.map": "/stocks-analyzer/static/css/main.f8bdb9a1.chunk.css.map",
-    "static/js/2.0dbaebcc.chunk.js.LICENSE.txt": "/stocks-analyzer/static/js/2.0dbaebcc.chunk.js.LICENSE.txt"
+    "static/js/2.d95cb60f.chunk.js.LICENSE.txt": "/stocks-analyzer/static/js/2.d95cb60f.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.12760762.js",
-    "static/js/2.0dbaebcc.chunk.js",
+    "static/js/2.d95cb60f.chunk.js",
     "static/css/main.f8bdb9a1.chunk.css",
-    "static/js/main.46b712d8.chunk.js"
+    "static/js/main.bf8305a5.chunk.js"
   ]
 }
