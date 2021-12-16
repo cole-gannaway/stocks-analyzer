@@ -5,7 +5,10 @@ import { DollarCostAverages } from './components/DollarCostAverages';
 import { ITransaction } from './model/ITransaction';
 import { addTransaction, bulkAddTransactions, deleteAllTransactions, removeTransaction, selectDCATransactionsAmountRemaining, selectDCATransactionsMemoized, selectTransactions, updateDollarCostAverageProfitSummary, updateDollarCostAverageSummary, updateDollarCostAverageTransactions, updateTransaction } from './slices/transactionsSlice';
 import { summarizeDollarCostAverageTransactions, summarizeProfitsFromDollarCostAverageTransactions } from './utilities/transaction-utils';
-import { fetchCurrentCryptoPrices } from './slices/currentPricesSlice';
+import { updateCurrentPrices } from './slices/currentPricesSlice';
+
+import { onValue, ref } from 'firebase/database';
+import { CryptoDictionary, database } from './firebase/firebase';
 
 
 function App() {
@@ -34,7 +37,24 @@ function App() {
 
   // on open, fetch current prices
   useEffect(() => {
-    dispatch(fetchCurrentCryptoPrices())
+
+    const dbRef = ref(database);
+
+    // subscribe
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const cryptoPrices = snapshot.val().cryptos as CryptoDictionary;
+        console.log(cryptoPrices);
+
+        dispatch(updateCurrentPrices(cryptoPrices));
+      } else {
+        console.log('No data available');
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    }
   }, [dispatch])
 
   // leverage React to listen to changes in state and convert to chart data accordingly

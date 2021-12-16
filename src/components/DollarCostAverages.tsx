@@ -21,7 +21,7 @@ export function DollarCostAverages() {
                 {Object.entries(dcaProfitSummary.notSoldAmount).map((entry) => {
                     const symbol = entry[0];
                     const amount = entry[1];
-                    return <tr key={"wallet-" + symbol}><td>{symbol}</td><td>{amount.toFixed(2)}</td></tr>
+                    return <tr key={"wallet-" + symbol}><td>{symbol}</td><td>{amount.toFixed(2)}</td><td></td></tr>
                 })}
             </tbody>
         </table>
@@ -33,7 +33,8 @@ export function DollarCostAverages() {
                         {Object.entries(dcaSummaries).map((entry) => {
                             const symbol = entry[0];
                             const summary = entry[1];
-                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${toFixedUnlessZero(summary.price, 2)}</td></tr>
+                            const dca = summary.price;
+                            return <tr key={"dca-summary-" + symbol}><td>{symbol}</td><td>${toFixedUnlessZero(dca, 2)}</td></tr>
                         })}
                     </tbody>
                 </table>
@@ -59,9 +60,10 @@ export function DollarCostAverages() {
                             const amount = entry[1];
                             const dcaPrice = dcaSummaries[symbol].price;
                             const totalCost = dcaPrice * amount;
-                            const potentialEarnings = currentPrices[symbol] * amount;
+                            const currentPrice = currentPrices[symbol];
+                            const potentialEarnings = currentPrice * amount;
                             const unrealizedProfits = potentialEarnings - totalCost;
-                            return <tr key={"dca-unrealized-profits-" + symbol}><td>{symbol}</td><td>${unrealizedProfits.toFixed(2)}</td></tr>
+                            return <tr key={"dca-unrealized-profits-" + symbol}><td>{symbol}</td><td>${unrealizedProfits.toFixed(2)}</td><td>{toFixedUnlessZero(((currentPrice - dcaPrice) / dcaPrice * 100), 2) + "%"}</td></tr>
                         })}
                     </tbody>
                 </table>
