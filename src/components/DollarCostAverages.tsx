@@ -1,7 +1,8 @@
 import { useAppSelector } from "../app/hooks";
 import { selectCurrentPrices } from "../slices/currentPricesSlice";
 import { selectDCAProfitSummary, selectDCASummaries } from "../slices/transactionsSlice";
-import { toFixedUnlessZero } from "../utilities/number-utils";
+import { formatDollarAmount } from "../utilities/number-utils";
+import { DashboardTD } from "./DashboardTD";
 
 export function DollarCostAverages() {
     const dcaSummaries = useAppSelector(selectDCASummaries);
@@ -29,18 +30,18 @@ export function DollarCostAverages() {
 
         return <tr key={"dashboard-" + symbol}>
             <td>{symbol}</td>
-            <td>{currentValue !== 0 ? "$" + toFixedUnlessZero(currentValue, 2) : "-"}</td>
-            <td>{amount ? amount.toFixed(2) : "-"}</td>
-            <td>{currentPrice ? "$" + toFixedUnlessZero(currentPrice, 2) : "-"}</td>
-            <td>{dca !== 0 ? "$" + toFixedUnlessZero(dca, 2) : "-"}</td>
-            <td>{dca !== 0 ? toFixedUnlessZero(((currentPrice - dca) / dca * 100), 2) + "%" : "-"}</td>
-            <td>{unrealizedProfits !== 0 ? "$" + toFixedUnlessZero(unrealizedProfits, 2) : "-"}</td>
-            <td>{profits !== 0 ? "$" + toFixedUnlessZero(profits, 2) : "-"}</td>
+            <DashboardTD value={currentValue} formatter={formatDollarAmount}></DashboardTD>
+            <DashboardTD value={amount} formatter={(val) => val.toFixed(2)}></DashboardTD>
+            <DashboardTD value={currentPrice} formatter={formatDollarAmount}></DashboardTD>
+            <DashboardTD value={dca} formatter={formatDollarAmount}></DashboardTD>
+            <DashboardTD value={(currentPrice && dca) ? ((currentPrice - dca) / dca * 100) : 0.0} formatter={(val) => val.toFixed(2) + "%"}></DashboardTD>
+            <DashboardTD value={unrealizedProfits} formatter={formatDollarAmount}></DashboardTD>
+            <DashboardTD value={profits} formatter={formatDollarAmount}></DashboardTD>
         </tr>
     });
 
-    return <div style={{textAlign: "center"}}>
-        <h1>Dashboard</h1>
+    return <div>
+        <h1 style={{textAlign: "center"}}>Dashboard</h1>
         <table>
             <thead>
                 <tr>
@@ -50,7 +51,14 @@ export function DollarCostAverages() {
             {dashboard}
             <tfoot>
                 <tr>
-                <td>Total</td><td>{"$" + toFixedUnlessZero(currentValueSum,2)}</td><td></td><td></td><td></td><td></td><td>{"$" + toFixedUnlessZero(unrealizedProfitsSum,2)}</td><td>{"$" + toFixedUnlessZero(allTimeProfitsSum,2)}</td>
+                    <td>Total</td>
+                    <DashboardTD value={currentValueSum} formatter={formatDollarAmount}></DashboardTD>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <DashboardTD value={unrealizedProfitsSum} formatter={formatDollarAmount}></DashboardTD>
+                    <DashboardTD value={allTimeProfitsSum} formatter={formatDollarAmount}></DashboardTD>
                 </tr>
             </tfoot>
 
