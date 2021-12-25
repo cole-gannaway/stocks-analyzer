@@ -1,12 +1,12 @@
 import { useAppSelector } from "../app/hooks";
 import { selectCurrentPrices } from "../slices/currentPricesSlice";
-import { selectDCAProfitSummary, selectDCASummaries } from "../slices/transactionsSlice";
+import { selectAppliedTransactionsProfitSummary, selectAppliedTransactionsSummarized } from "../slices/transactionsSlice";
 import { formatDollarAmount } from "../utilities/number-utils";
 import { DashboardTD } from "./DashboardTD";
 
 export function DollarCostAverages() {
-    const dcaSummaries = useAppSelector(selectDCASummaries);
-    const dcaProfitSummary = useAppSelector(selectDCAProfitSummary);
+    const dcaSummaries = useAppSelector(selectAppliedTransactionsSummarized);
+    const dcaProfitSummary = useAppSelector(selectAppliedTransactionsProfitSummary);
     const currentPrices = useAppSelector(selectCurrentPrices);
 
     let currentValueSum = 0;
@@ -24,7 +24,7 @@ export function DollarCostAverages() {
         const unrealizedProfits = potentialEarnings - totalCost;
 
         // update running totals
-        currentValueSum+= currentValue;
+        currentValueSum += currentValue;
         unrealizedProfitsSum += unrealizedProfits;
         allTimeProfitsSum += profits;
 
@@ -41,14 +41,16 @@ export function DollarCostAverages() {
     });
 
     return <div>
-        <h1 style={{textAlign: "center"}}>Dashboard</h1>
+        <h1 style={{ textAlign: "center" }}>Dashboard</h1>
         <table>
             <thead>
                 <tr>
                     <th>Symbol</th><th>Current Value</th><th>Amount</th><th>Current Price</th><th>Dollar Cost Average</th><th>% Return</th><th>Unrealized Profits</th><th>All Time Profits</th>
                 </tr>
             </thead>
-            {dashboard}
+            <tbody>
+                {dashboard}
+            </tbody>
             <tfoot>
                 <tr>
                     <td>Total</td>

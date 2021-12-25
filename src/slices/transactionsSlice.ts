@@ -12,23 +12,10 @@ export interface TranscationsState {
   transactions: {
     [id: string]: ITransaction;
   };
-  summaryData: {
-    dollarCostAveragesTransactions: IDollarCostAverageTransactions;
-    dollarCostAveragesSummary: IDollarCostAverageSummary;
-    dollarCostAveragesProfitsSummary: IDollarCostAverageProfitSummary;
-  };
 }
 
 const initialState: TranscationsState = {
   transactions: {},
-  summaryData: {
-    dollarCostAveragesTransactions: {},
-    dollarCostAveragesSummary: {},
-    dollarCostAveragesProfitsSummary: {
-      profits: {},
-      notSoldAmount: {},
-    },
-  },
 };
 
 export const transactionsSlice = createSlice({
@@ -74,24 +61,6 @@ export const transactionsSlice = createSlice({
     removeTransaction: (state, action: PayloadAction<{ id: string }>) => {
       delete state.transactions[action.payload.id];
     },
-    updateDollarCostAverageTransactions: (
-      state,
-      action: PayloadAction<IDollarCostAverageTransactions>
-    ) => {
-      state.summaryData.dollarCostAveragesTransactions = action.payload;
-    },
-    updateDollarCostAverageSummary: (
-      state,
-      action: PayloadAction<IDollarCostAverageSummary>
-    ) => {
-      state.summaryData.dollarCostAveragesSummary = action.payload;
-    },
-    updateDollarCostAverageProfitSummary: (
-      state,
-      action: PayloadAction<IDollarCostAverageProfitSummary>
-    ) => {
-      state.summaryData.dollarCostAveragesProfitsSummary = action.payload;
-    },
   },
 });
 
@@ -101,21 +70,12 @@ export const {
   deleteAllTransactions,
   updateTransaction,
   removeTransaction,
-  updateDollarCostAverageTransactions,
-  updateDollarCostAverageSummary,
-  updateDollarCostAverageProfitSummary,
 } = transactionsSlice.actions;
 
 export const selectTransactions = (state: RootState) =>
   state.transactionsData.transactions;
-export const selectDCASummaries = (state: RootState) =>
-  state.transactionsData.summaryData.dollarCostAveragesSummary;
-export const selectDCATransactions = (state: RootState) =>
-  state.transactionsData.summaryData.dollarCostAveragesTransactions;
-export const selectDCAProfitSummary = (state: RootState) =>
-  state.transactionsData.summaryData.dollarCostAveragesProfitsSummary;
 
-export const selectDCATransactionsMemoized = createSelector(
+export const selectAppliedTransactions = createSelector(
   [selectTransactions],
   (transactionsData) => {
     // deep copy transactions map to a list
@@ -197,7 +157,7 @@ export const selectDCATransactionsMemoized = createSelector(
 );
 
 export const selectDCATransactionsAmountRemaining = createSelector(
-  [selectDCATransactionsMemoized],
+  [selectAppliedTransactions],
   (dcaTransactions) => {
     // flatten out the transactions to be easily accessible
     const transactionsAmountLeft: { [id: string]: number } = {};
@@ -212,6 +172,123 @@ export const selectDCATransactionsAmountRemaining = createSelector(
       });
     });
     return transactionsAmountLeft;
+  }
+);
+
+function addToSumMap(map: Map<string, number>, symbol: string, amount: number) {
+  let sum = map.get(symbol);
+  if (!sum) sum = 0;
+  sum += amount;
+  map.set(symbol, sum);
+}
+
+export const selectAppliedTransactionsSummarized = createSelector(
+  [selectAppliedTransactions],
+  (dcaTransactions) => {
+    // sum up the amount left per symbol
+    const symbolToAmountsSumMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    // sum up the (amount * price) left per symbol for a weighted sum
+    const symbolToWeightedSumMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    Object.keys(dcaTransactions).forEach((buyId) => {
+      const buy = dcaTransactions[buyId];
+      if (buy.result.amount !== 0) {
+        const symbol = buy.result.symbol;
+        addToSumMap(symbolToAmountsSumMap, symbol, buy.result.amount);
+        addToSumMap(
+          symbolToWeightedSumMap,
+          symbol,
+          buy.result.amount * buy.result.price
+        );
+      }
+    });
+
+    const dcaSummary: IDollarCostAverageSummary = {};
+    symbolToAmountsSumMap.forEach((amountSum, symbol) => {
+      const weightedSum = symbolToWeightedSumMap.get(symbol);
+      if (weightedSum) {
+        const dcaPrice = weightedSum / amountSum;
+        dcaSummary[symbol] = {
+          symbol: symbol,
+          price: dcaPrice,
+        };
+      }
+    });
+    return dcaSummary;
+  }
+);
+
+export const selectAppliedTransactionsProfitSummary = createSelector(
+  [selectAppliedTransactions, selectTransactions],
+  (dcaTransactions, transactionsData) => {
+    const symbolToSpendingsSumMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    const symbolToEarningsSumMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    const symbolToAmountNotSoldMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    Object.keys(dcaTransactions).forEach((buyId) => {
+      const buy = dcaTransactions[buyId];
+      const symbol = buy.result.symbol;
+      const sellIds = Object.keys(buy.sells);
+
+      const amountNotSold = buy.result.amount;
+      const amountSold = transactionsData[buyId].amount - amountNotSold;
+
+      // sum up how much was bought but not sold
+      if (amountNotSold !== 0) {
+        addToSumMap(symbolToAmountNotSoldMap, symbol, amountNotSold);
+      }
+      // sum up how much was bought and sold
+      addToSumMap(
+        symbolToSpendingsSumMap,
+        symbol,
+        amountSold * transactionsData[buyId].price
+      );
+      sellIds.forEach((sellId) => {
+        const sell = buy.sells[sellId];
+        // sum up returns
+        const returns = -1 * sell.amount * sell.price;
+        // add to earnings
+        addToSumMap(symbolToEarningsSumMap, symbol, returns);
+      });
+    });
+
+    // combine
+    const symbolToProfitsSumMap: Map<string, number> = new Map<
+      string,
+      number
+    >();
+    symbolToSpendingsSumMap.forEach((val, key) =>
+      addToSumMap(symbolToProfitsSumMap, key, -1 * val)
+    );
+    symbolToEarningsSumMap.forEach((val, key) =>
+      addToSumMap(symbolToProfitsSumMap, key, val)
+    );
+
+    // return
+    const profitSummary: IDollarCostAverageProfitSummary = {
+      profits: {},
+      notSoldAmount: {},
+    };
+    symbolToProfitsSumMap.forEach(
+      (val, key) => (profitSummary.profits[key] = val)
+    );
+    symbolToAmountNotSoldMap.forEach(
+      (val, key) => (profitSummary.notSoldAmount[key] = val)
+    );
+    return profitSummary;
   }
 );
 

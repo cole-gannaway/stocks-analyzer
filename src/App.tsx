@@ -3,19 +3,20 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { DataTable } from './components/DataTable';
 import { DollarCostAverages } from './components/DollarCostAverages';
 import { ITransaction } from './model/ITransaction';
-import { addTransaction, bulkAddTransactions, deleteAllTransactions, removeTransaction, selectDCATransactionsAmountRemaining, selectDCATransactionsMemoized, selectTransactions, updateDollarCostAverageProfitSummary, updateDollarCostAverageSummary, updateDollarCostAverageTransactions, updateTransaction } from './slices/transactionsSlice';
-import { summarizeDollarCostAverageTransactions, summarizeProfitsFromDollarCostAverageTransactions } from './utilities/transaction-utils';
+import { addTransaction, bulkAddTransactions, deleteAllTransactions, removeTransaction, selectDCATransactionsAmountRemaining, selectTransactions, updateTransaction } from './slices/transactionsSlice';
 import { updateCurrentPrices } from './slices/currentPricesSlice';
 
 import { onValue, ref } from 'firebase/database';
 import { CryptoDictionary, database } from './firebase/firebase';
+
+// Testing only
+import { current_data } from './config/current_data'
 
 
 function App() {
   const dispatch = useAppDispatch();
 
   const transactions = useAppSelector(selectTransactions);
-  const dcaTransactions = useAppSelector(selectDCATransactionsMemoized);
   const dcaTransactionsRemaining = useAppSelector(selectDCATransactionsAmountRemaining);
 
   function handleCreateTransaction(transaction?: ITransaction) {
@@ -38,34 +39,31 @@ function App() {
   // on open, fetch current prices
   useEffect(() => {
 
-    const dbRef = ref(database);
+    // const dbRef = ref(database);
 
-    // subscribe
-    const unsubscribe = onValue(dbRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const cryptoPrices = snapshot.val().cryptos as CryptoDictionary;
-        console.log(cryptoPrices);
+    // // subscribe
+    // const unsubscribe = onValue(dbRef, (snapshot) => {
+    //   if (snapshot.exists()) {
+    //     const cryptoPrices = snapshot.val().cryptos as CryptoDictionary;
+    //     console.log(cryptoPrices);
 
-        dispatch(updateCurrentPrices(cryptoPrices));
-      } else {
-        console.log('No data available');
-      }
-    });
+    //     dispatch(updateCurrentPrices(cryptoPrices));
+    //   } else {
+    //     console.log('No data available');
+    //   }
+    // });
 
-    return () => {
-      unsubscribe();
-    }
+    // return () => {
+    //   unsubscribe();
+    // }
+    let cryptos: any = {}
+    current_data.data.forEach((data) => {
+      cryptos[data.symbol] = data.quote.USD.price
+    })
+    console.log(cryptos)
+    dispatch(updateCurrentPrices(cryptos))
   }, [dispatch])
 
-  // leverage React to listen to changes in state and convert to chart data accordingly
-  useEffect(() => {
-    const dcaSummary = summarizeDollarCostAverageTransactions(dcaTransactions);
-    const dcaProfitSummary = summarizeProfitsFromDollarCostAverageTransactions(dcaTransactions, transactions);
-    summarizeProfitsFromDollarCostAverageTransactions(dcaTransactions, transactions);
-    dispatch(updateDollarCostAverageTransactions(dcaTransactions));
-    dispatch(updateDollarCostAverageSummary(dcaSummary));
-    dispatch(updateDollarCostAverageProfitSummary(dcaProfitSummary));
-  }, [dispatch, transactions, dcaTransactions])
   return (
     <div>
       <DollarCostAverages></DollarCostAverages>
