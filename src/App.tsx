@@ -9,9 +9,6 @@ import { updateCurrentPrices } from './slices/currentPricesSlice';
 import { onValue, ref } from 'firebase/database';
 import { CryptoDictionary, database } from './firebase/firebase';
 
-// Testing only
-import { current_data } from './config/current_data'
-
 
 function App() {
   const dispatch = useAppDispatch();
@@ -39,29 +36,23 @@ function App() {
   // on open, fetch current prices
   useEffect(() => {
 
-    // const dbRef = ref(database);
+    const dbRef = ref(database);
 
-    // // subscribe
-    // const unsubscribe = onValue(dbRef, (snapshot) => {
-    //   if (snapshot.exists()) {
-    //     const cryptoPrices = snapshot.val().cryptos as CryptoDictionary;
-    //     console.log(cryptoPrices);
+    // subscribe
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const cryptoPrices = snapshot.val().cryptos as CryptoDictionary;
+        console.log(cryptoPrices);
 
-    //     dispatch(updateCurrentPrices(cryptoPrices));
-    //   } else {
-    //     console.log('No data available');
-    //   }
-    // });
+        dispatch(updateCurrentPrices(cryptoPrices));
+      } else {
+        console.log('No data available');
+      }
+    });
 
-    // return () => {
-    //   unsubscribe();
-    // }
-    let cryptos: any = {}
-    current_data.data.forEach((data) => {
-      cryptos[data.symbol] = data.quote.USD.price
-    })
-    console.log(cryptos)
-    dispatch(updateCurrentPrices(cryptos))
+    return () => {
+      unsubscribe();
+    }
   }, [dispatch])
 
   return (
