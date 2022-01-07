@@ -40,9 +40,9 @@ export function DollarCostAverages() {
         </tr>
     });
 
-    return <div>
-        <h1 style={{ textAlign: "center" }}>Dashboard</h1>
-        <table>
+    return <div style={{textAlign:"center", padding:"40px"}}>
+        <h1>Dashboard</h1>
+        <table style={{marginLeft : "auto", marginRight: "auto", width:"100%"}}>
             <thead>
                 <tr>
                     <th>Symbol</th><th>Current Value</th><th>Amount</th><th>Current Price</th><th>Dollar Cost Average</th><th>% Return</th><th>Unrealized Profits</th><th>All Time Profits</th>
