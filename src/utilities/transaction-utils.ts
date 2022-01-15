@@ -20,13 +20,13 @@ export function summarizeDollarCostAverageTransactions(
   const symbolToWeightedSumMap: Map<string, number> = new Map<string, number>();
   Object.keys(dcaTransactions).forEach((buyId) => {
     const buy = dcaTransactions[buyId];
-    if (buy.result.amount !== 0) {
-      const symbol = buy.result.symbol;
-      addToSumMap(symbolToAmountsSumMap, symbol, buy.result.amount);
+    const { amount, symbol, price } = buy.result;
+    if (amount !== 0) {
+      addToSumMap(symbolToAmountsSumMap, symbol, amount);
       addToSumMap(
         symbolToWeightedSumMap,
         symbol,
-        buy.result.amount * buy.result.price
+        amount * price
       );
     }
   });

@@ -7,12 +7,8 @@ export function createCSV(rows: string[][]) {
 }
 
 export function convertTransactionRowIntoCSVRows(dataRows: ITransaction[]) {
-  const csvRows = dataRows.map((dataRow) => {
-    const row: string[] = [];
-    row.push(dataRow.symbol);
-    row.push(dataRow.date.toString());
-    row.push(dataRow.amount.toString());
-    row.push(dataRow.price.toString());
+  const csvRows = dataRows.map(({ symbol, date, amount, price }) => {
+    const row = [symbol, date.toString(), amount.toString(), price.toString()];
     return row;
   });
   const headerRow = ['symbol', 'date', 'amount', 'price'];
