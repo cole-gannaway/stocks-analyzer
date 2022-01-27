@@ -97,8 +97,8 @@ export function DataRow(props: IDataRowProps) {
         </TableCell>
         <TableCell style={{ color: textColor }}>
             {!isEditing ?
-                ("$" + commaFormatter.format(roundDecimalPlaces(props.data.price * props.data.amount, 2))) :
-                ("$" + commaFormatter.format(roundDecimalPlaces(price * amount, 2)))
+                ("$" + commaFormatter.format(roundDecimalPlaces(-1 * (props.data.price * props.data.amount), 2))) :
+                ("$" + commaFormatter.format(roundDecimalPlaces(-1 * (price * amount), 2)))
             }
         </TableCell>
         <TableCell onClick={() => props.deleteRow(props.uuid)}><DeleteIcon /></TableCell>
